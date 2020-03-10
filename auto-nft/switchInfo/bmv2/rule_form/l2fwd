@@ -1,0 +1,5 @@
+table_add table_header_match_112_stage1 set_action_id 1 0x%02X%02X%02X%02X%02X%02X0000000000000000&&&0xFFFFFFFFFFFF0000000000000000 => 0x00000001 %d 1
+table_add table_action_mod_112_srcAddr_stage1 action_mod_112_srcAddr 1 => 0x0000000000000000000000010000
+table_add table_action_drop_stage1 action_drop 1 =>
+table_add table_action_forward_stage1 action_forward 1 %d => %d
+table_add table_action_mod_112_dstAddr_stage1 action_mod_112_dstAddr 1 %d => 0x%02X%02X%02X%02X%02X%02X0000000000000000
