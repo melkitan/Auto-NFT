@@ -1,0 +1,9 @@
+table_add table_header_match_224_stage4 set_action_id 4 0x000000000000%04X0000000000000000000000000000000000000000&&&0x000000000000FFFF0000000000000000000000000000000000000000 => 0x00001F81 %d 1
+table_add table_action_mod_224_opcode_n_response_stage4 action_mod_224_opcode_n_response 4 => 2
+table_add table_action_extract_n_shift_112_srcAddr_stage4 action_extract_n_shift_112_srcAddr 4 =>
+table_add table_action_mod_112_bothAddr_stage4 action_mod_112_bothAddr 4 => 0x0000000000000000000001010000
+table_add table_action_extract_n_shift_224_srcMAC_stage4 action_extract_n_shift_224_srcMAC 4 =>
+table_add table_action_mod_224_bothMAC_stage4 action_mod_224_bothMAC 4 => 0x0000000000000000%02X%02X%02X%02X%02X%02X0000000000000000000000000000
+table_add table_action_extract_n_shift_224_srcIP_stage4 action_extract_n_shift_224_srcIP 4 =>
+table_add table_action_mod_224_bothIP_stage4 action_mod_224_bothIP 4 => 0x0000000000000000000000000000%02X%02X%02X%02X00000000000000000000
+table_add table_action_drop_stage4 action_drop 4 =>
