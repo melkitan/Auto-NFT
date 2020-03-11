@@ -56,6 +56,12 @@ def printResourceBar(screen):
       screen.addstr(padding + i + 2, padding + j + 16, '#')
     screen.addstr(padding + 2 + i, padding + BAR_SIZE + 18, '(' + str(cnt[i] * 100 / MAX_RESOURCE_NUM) + '%/100%)')
 
+def populateRulesIntoSwitch():
+  f = open('switchInfo/' + targetName + '/command', 'r')
+  cmd = f.read()
+  f.close()
+  os.system(cmd + '> log')
+
 def main(screen):
   NFcnt = 0
   while True:
@@ -93,13 +99,17 @@ def main(screen):
       mapControlflowToStage(nfList['l2_switching'], 'l2_switching')
 
 # init
-curses.initscr()
+def init():
+  curses.initscr()
 
-curses.start_color()
-curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)
-curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_YELLOW)
-curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_GREEN)
-curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_MAGENTA)
-curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_CYAN)
+  curses.start_color()
+  curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)
+  curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_YELLOW)
+  curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_GREEN)
+  curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_MAGENTA)
+  curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_CYAN)
 
-curses.wrapper(main)
+  curses.wrapper(main)
+
+if __name__ == '__main__':
+  init()
