@@ -1,0 +1,47 @@
+{
+  "rules": [
+    {
+      "type" : "cfg",
+      "value" : [
+        "table_add table_config_at_initial set_initial_config %d => %d %d %d %d",
+        "table_add table_header_match_%d_stage_%d set_action_id =>"
+      ]
+    },
+    {
+      "type" : "mod_dstAddr",
+      "value" : ""
+    },
+    {
+      "type" : "mod_srcAddr",
+      "value" : ""
+    },
+    {
+      "type" : "forward",
+      "value" : ""
+    },
+    {
+      "type" : "drop",
+      "value" : ""
+    },
+    {
+      "type" : "mod_opcode_n_response",
+      "value" : ""
+    },
+    {
+      "type" : "extract_srcAddr",
+      "value" : ""
+    },
+    {
+      "type" : "mod_Addr",
+      "value" : ""
+    },
+    {
+      "type" : "extract_srcMAC",
+      "value" : ""
+    },
+    {
+      "type" : "mod_IP",
+      "value" : ""
+    }
+  ]
+}

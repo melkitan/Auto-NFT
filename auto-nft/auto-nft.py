@@ -9,6 +9,8 @@ def parseP4Code(filename, tlist, clist):
   LBRACE,RBRACE,LPAREN,RPAREN,SEMI,COLON = map(Suppress,"{}();:") 
   string = Word(alphanums + '_.') 
 
+  # parser
+  
   # table
   TABLE = Keyword("table")
   READS = Keyword("reads")
