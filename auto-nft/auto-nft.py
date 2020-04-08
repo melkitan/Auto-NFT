@@ -1,8 +1,8 @@
 from pyparsing import *
 from pprint import pprint
 
-def parseP4Code(filename, tlist, clist):
-  with open(filename, 'r') as f:
+def parseP4Code(filename, tdic, clist):
+  with open('../p4/' + filename, 'r') as f:
     data = f.read()
   
   # define basic punctuation and data types 
@@ -17,7 +17,7 @@ def parseP4Code(filename, tlist, clist):
   ACTIONS = Keyword("actions")
 
   match = Group(string("field") + COLON + string("method") + SEMI)
-  action = Group(string("name") + SEMI)
+  action = string("name") + SEMI
   reads = Group(READS + LBRACE + ZeroOrMore(match) + RBRACE)
   actions = Group(ACTIONS + LBRACE + ZeroOrMore(action) + RBRACE)
 
@@ -53,9 +53,16 @@ def parseP4Code(filename, tlist, clist):
 
   for val in result:
     if val[0] == 'table':
-      tlist.append(val)
+      tdic[val[1]] = {'key' : val[2][1:], 'action' : val[3][1:]}
     elif val[0] == 'control':
       clist.append(val)
+
+  print('table dictionary')
+  for k, v in tdic.items():
+    print('table name = ' + k)
+    print('--- key list = ' + str(v['key']))
+    print('--- action list = ' + str(v['action']))
+    print
 
 sortedCFG = []
 def sortControlFlowGraph(n):
@@ -97,8 +104,8 @@ def parseP4Rules():
   pass
 
 def main():
-  clist = []; tlist = []
-  parseP4Code('firewall.p4', tlist, clist)
+  clist = []; tdic = {}
+  parseP4Code('firewall.p4', tdic, clist)
   parseP4Rules()
   mapControlflowToStage(clist)
 
