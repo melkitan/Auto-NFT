@@ -100,13 +100,20 @@ def mapControlflowToStage(clist):
     print(v)
 
 
-def parseP4Rules():
-  pass
+def parseP4Rules(filename, rdic):
+  with open('../p4/' + filename, 'r') as f:
+    rules = f.readlines()
+    
+    for rule in rules:
+      rule = rule.split()
+      rdic[rule[0]] = [rule[1], rule[2:]]
+      print rule[0] , " : ", rdic[rule[0]]
+
 
 def main():
-  clist = []; tdic = {}
+  clist = []; tdic = {}; rdic = {}
   parseP4Code('firewall.p4', tdic, clist)
-  parseP4Rules()
+  parseP4Rules('firewall_rules', rdic)
   mapControlflowToStage(clist)
 
 main()
