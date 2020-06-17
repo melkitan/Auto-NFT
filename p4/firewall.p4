@@ -1,45 +1,43 @@
 table firewall_with_tcp {
-    reads {
-        ipv4.srcAddr : ternary;
-        ipv4.dstAddr : ternary;
-        tcp.srcPort  : ternary;
-        tcp.dstPort  : ternary;
+    key = {
+        hdr.ipv4.srcAddr : ternary;
+        hdr.ipv4.dstAddr : ternary;
+        hdr.tcp.srcPort  : ternary;
+        hdr.tcp.dstPort  : ternary;
     }
-    actions {
-        block;
-        noop;
+    actions = {
+        drop;
+        noAction;
     }
 }
 
 table firewall_with_udp {
-    reads {
-        ipv4.srcAddr : ternary;
-        ipv4.dstAddr : ternary;
-        udp.srcPort  : ternary;
-        udp.dstPort  : ternary;
+    key = {
+        hdr.ipv4.srcAddr : ternary;
+        hdr.ipv4.dstAddr : ternary;
+        hdr.udp.srcPort  : ternary;
+        hdr.udp.dstPort  : ternary;
     }
-    actions {
-        block;
-        noop;
+    actions = {
+        drop;
+        noAction;
     }
 }
 
 table forward_table {
-    reads {
-        standard_metadata.ingress_port : exact;
+    key = {
     }
-    actions {
-        forward;
+    actions = {
+        do_forward;
     }
 }
+
 control ingress {
     apply(forward_table);
-    if (valid(ipv4)) {
-        if(valid(udp)) {
-            apply(firewall_with_udp);
-        }
-        else if(valid(tcp)) {
-            apply(firewall_with_tcp);
-        }
+    if (valid(hdr.udp)) {
+        apply(firewall_with_udp);
+    }
+    else if (valid(hdr.tcp)) {
+        apply(firewall_with_tcp);
     }
 }
