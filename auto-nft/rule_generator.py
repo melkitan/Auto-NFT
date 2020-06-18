@@ -38,10 +38,20 @@ def generateMatchRule(ruleTemplate, keys, matchFields, actionName):
   actionBitmap = "0x%08X" % 0
   return etherMatch + ", " + etherMatchMask + ", " + ipv4Match + ", " + ipv4MatchMask + ", " + tcpMatch + ", " + tcpMatchMask + ", " + actionBitmap
 
+def generateActionRule():
+  pass
+  
 def translateRules(inst_id, rules, sortedCFG, tdic, rdic):
   rlist = []
   # configuration rule (table_config_at_initial)
-  # rlist.append(configuration rule)
+  # parameter (vdp_id, inst_id, stage_id, match_chain_bitmap, header_chain_bitmap)
+  ruleTemplate = rules['cfg'][0]
+  pipe = sortedCFG[0][2] < 3 and 'Ingress' or 'Egress'
+  stage_id = sortedCFG[0][2] % 3 # virtual stage number of first node
+  match_chain_bitmap = 4 # header match
+  header_chain_bitmap = 1
+  translateRules = ruleTemplate % (pipe, inst_id, inst_id, stage_id, match_chain_bitmap, header_chain_bitmap)
+  rlist.append(translateRules)
   
   for node in sortedCFG: # sortedCFG: [table_info, num_of_rules, virtual_stage_number]
     pipe = node[2] < 3 and 'Ingress' or 'Egress'
