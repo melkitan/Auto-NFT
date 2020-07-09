@@ -14,6 +14,8 @@ def main():
 
   rules = rg.getRuleTemplate('tofino')
   rlist = rg.translateRules(0, rules, sortedCFG, tdic, rdic)
+  rg.makeFiles(rlist, 'tofino')
+  rg.populateRules('tofino')
 
 if __name__ == '__main__':
   main()

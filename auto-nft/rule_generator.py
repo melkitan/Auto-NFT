@@ -1,4 +1,5 @@
 import json
+import os
 
 def getRuleTemplate(target):
   with open('switchInfo/' + target + '/rule_form/rules.json', 'r') as f:
@@ -90,7 +91,6 @@ def makeFiles(rlist, target):
   f.write(head.read())
   head.close()
 
-  print "\n\n -- translated rule list -- "
   for v in rlist:
     f.write("    " + v + "\n")
 
@@ -99,5 +99,8 @@ def makeFiles(rlist, target):
   tail.close()
 
   f.close()
-
   return
+
+def populateRules(target):
+  cmd = open('switchInfo/' + target + "/command", 'r')
+  os.system(cmd.read())

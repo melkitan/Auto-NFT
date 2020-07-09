@@ -1,0 +1,4 @@
+from ipaddress import ip_address
+
+def insert_rule(bfrt):
+    p4 = bfrt.hypervisor_tf4

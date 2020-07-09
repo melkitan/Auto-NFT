@@ -54,12 +54,12 @@ def parseP4Code(filename, tdic, clist):
     elif val[0] == 'control':
       clist.append(val)
 
-  print('table dictionary')
-  for k, v in tdic.items():
-    print('table name = ' + k)
-    print('--- key list = ' + str(v['key']))
-    print('--- action list = ' + str(v['action']))
-    print
+  # print('table dictionary')
+  # for k, v in tdic.items():
+  #   print('table name = ' + k)
+  #   print('--- key list = ' + str(v['key']))
+  #   print('--- action list = ' + str(v['action']))
+  #   print
 
 def parseP4Rules(filename, rdic):
   with open('../p4/' + filename, 'r') as f:

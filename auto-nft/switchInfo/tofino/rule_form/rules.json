@@ -1,41 +1,41 @@
 [
   {
     "type" : "cfg",
-    "value" : "p4.%s.table_config_at_initial.add_with_set_initial_config(%d, %d, %d, %d, %d)",
+    "value" : "p4.Switch%s.table_config_at_initial.add_with_set_initial_config(%d, %d, %d, %d, %d)",
     "params" : []
   },
   {
     "type" : "header_match",
-    "value" : "p4.{pipe}.table_header_match_stage{virtualStageNum}.add_with_set_action_id",
+    "value" : "p4.Switch{pipe}.table_header_match_stage{virtualStageNum}.add_with_set_action_id{virtualStageNum}",
     "params" : {"inst_id" : "%d", "eth" : "0x%012X%012X%04X", "ipv4" : "0x000000000000000000000%02X%04X%06X%06X",
                  "tcp" : "0x%04X%04X00000000000000000000000000000000", "action_bitmap" : "0x%08X"}
   },
   {
     "type" : "hash",
     "value" : [
-      "p4.%s.table_action_hash_stage%d.add_with_action_hash(%d)",
-      "p4.%s.table_action_extract_meta_%d_stage%d.add_with_action_extract_meta_%d(%d, 0x%s)"
+      "p4.Switch%s.table_action_hash_stage%d.add_with_action_hash(%d)",
+      "p4.Switch%s.table_action_extract_meta_%d_stage%d.add_with_action_extract_meta_%d(%d, 0x%s)"
     ],
     "params" : []
   },
   {
     "type" : "do_forward",
-    "value" : "p4.{pipe}.table_action_forward_stage{virtualStageNum}.add_with_action_forward",
+    "value" : "p4.Switch{pipe}.table_action_forward_stage{virtualStageNum}.add_with_action_forward",
     "params" : [["inst_id", ["%d"]], ["hash_output", ["0x%08X", "0x%08X"]], ["action_param", ["%d"]]]
   },
   {
     "type" : "drop",
-    "value" : "p4.{pipe}.table_action_drop_stage{virtualStageNum}.add_with_action_drop",
+    "value" : "p4.Switch{pipe}.table_action_drop_stage{virtualStageNum}.add_with_action_drop",
     "params" : [["inst_id", ["%d"]]]
   },
   {
     "type" : "mod_112_dstaddr",
-    "value" : "p4.%s.table_action_mod_112_dstAddr_stage%d.add_with_action_mod_112_dstAddr(%d, 0x00000000000000000000000000000000%04X)",
+    "value" : "p4.Switch%s.table_action_mod_112_dstAddr_stage%d.add_with_action_mod_112_dstAddr(%d, 0x00000000000000000000000000000000%04X)",
     "params" : [["%d"], ["0x%08X", "0x%08X"], ["%d"]]
   },
   {
     "type" : "mod_112_srcaddr",
-    "value" : "p4.%s.table_action_mod_112_srcAddr_stage%d.add_with_action_mod_112_srcAddr(%d, 0x0000000000000000000000000000%04X0000)",
+    "value" : "p4.Switch%s.table_action_mod_112_srcAddr_stage%d.add_with_action_mod_112_srcAddr(%d, 0x0000000000000000000000000000%04X0000)",
     "params" : [["%d"], ["0x%08X", "0x%08X"], ["%d"]]
   }
 ]
