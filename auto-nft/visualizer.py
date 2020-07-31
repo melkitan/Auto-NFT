@@ -29,38 +29,33 @@ def mapControlflowToStage(clist, nfName):
     resourceStatus[nfName][i] = node
     i = (i + 1) % 6
 
-def printResourceBar(screen):
+def printResourceBar(screen, resourceInfo, vsLen):
   # stageN : 
-  for i in range(0, 6):
+  for i in range(0, vsLen):
     screen.addstr(padding + 2 + i, padding + 0, 'VirtualStage' + str(i + 1) + ' : ')
 
   reqPos = 0 
-  cnt = [0, 0, 0, 0, 0, 0]
-  for reqName, resource in resourceStatus.items():
-    # instance name
-    req_id = resource[len(resource) - 1]
-    print(req_id)
-    screen.addstr(padding + 1, padding + reqPos, reqName, curses.color_pair(req_id))
-    reqPos += len(reqName) + 2
+  cnt = [0 for _ in range(vsLen)]
+  # for reqName, resource in resourceStatus.items():
+    # # instance name
+    # req_id = resource[len(resource) - 1]
+    # print(req_id)
+    # screen.addstr(padding + 1, padding + reqPos, reqName, curses.color_pair(req_id))
+    # reqPos += len(reqName) + 2
 
-    # resource of instance
-    for idx, val in enumerate(resource): 
-      if idx == 6: break;
-      for i in range(cnt[idx], cnt[idx] + val * ratio):
-        screen.addstr(padding + idx + 2, padding + i + 16, '#', curses.color_pair(req_id))
-      cnt[idx] = cnt[idx] + val * ratio
+  # resource of instance
+  for nf in resourceInfo: 
+    # if idx == vsLen: break
+    for i in range(vsLen):
+      for j in range(cnt[i], cnt[i] + nf[i]):
+        screen.addstr(padding + i + 2, padding + j + 16, '#', curses.color_pair(1))
+    cnt[i] = cnt[i] + nf[i]
 
-  # each percent of resource 
-  for i in range(6):
-    for j in range(cnt[i], BAR_SIZE):
-      screen.addstr(padding + i + 2, padding + j + 16, '#')
-    screen.addstr(padding + 2 + i, padding + BAR_SIZE + 18, '(' + str(cnt[i] * 100 / MAX_RESOURCE_NUM) + '%/100%)')
-
-def populateRulesIntoSwitch():
-  f = open('switchInfo/' + targetName + '/command', 'r')
-  cmd = f.read()
-  f.close()
-  os.system(cmd + '> log')
+  # # each percent of resource 
+  # for i in range(vsLen):
+  #   for j in range(cnt[i], BAR_SIZE):
+  #     screen.addstr(padding + i + 2, padding + j + 16, '#')
+  #   screen.addstr(padding + 2 + i, padding + BAR_SIZE + 18, '(' + str(cnt[i] * 100 / MAX_RESOURCE_NUM) + '%/100%)')
 
 def main(screen):
   NFcnt = 0
@@ -85,17 +80,17 @@ def main(screen):
     input_text = box.gather()
 
     if input_text != '':
+      resourceStatus['load_balancing'] = [0, 0, 0, 0, 0, 0, 4]
+      nfList['load_balancing'] = [1, 11, 11, 18, 9, 9]
+      mapControlflowToStage(nfList['load_balancing'], 'load_balancing')
       resourceStatus['firewall'] = [0, 0, 0, 0, 0, 0, 3]
-      nfList['firewall'] = [16, 12, 8]
+      nfList['firewall'] = [10, 10, 1, 10, 10, 16]
       mapControlflowToStage(nfList['firewall'], 'firewall')
       resourceStatus['l3_forwarding'] = [0, 0, 0, 0, 0, 0, 2]
-      nfList['l3_forwarding'] = [8, 40, 24, 16]
+      nfList['l3_forwarding'] = [4, 3, 3, 3, 3, 3]
       mapControlflowToStage(nfList['l3_forwarding'], 'l3_forwarding')
-      resourceStatus['arp_proxy'] = [0, 0, 0, 0, 0, 0, 4]
-      nfList['arp_proxy'] = [12, 6, 24]
-      mapControlflowToStage(nfList['arp_proxy'], 'arp_proxy')
       resourceStatus['l2_switching'] = [0, 0, 0, 0, 0, 0, 1]
-      nfList['l2_switching'] = [12]
+      nfList['l2_switching'] = [3, 3, 3, 3, 3, 3]
       mapControlflowToStage(nfList['l2_switching'], 'l2_switching')
 
 # init

@@ -1,3 +1,5 @@
+import copy
+
 def sortControlFlowGraph(n, sortedCFG):
   if type(n) is not list: # basement state
     return
@@ -29,6 +31,16 @@ def mapControlflowToStage(sortedCFG):
     virtualStages[i] += node[1] # stage usage update
     node[2] = i # node info update
     i += 1
+
+def resourcePerStage(sortedCFG):
+  resourceInfo = []
+  nfResource = [0 for _ in range(len(virtualStages))]
+  for node in sortedCFG: # node = [match, occupiedResource, allocatedStage]
+    nfResource[node[2]] += node[1]
+  for i in range(len(nfResource)):
+    nfResource[i] = int(100.0 * nfResource[i] / STAGE_SIZE)
+  resourceInfo.append(nfResource)
+  return resourceInfo, len(virtualStages)
 
 def main():
   clist = []; tdic = {}; rdic = {}
