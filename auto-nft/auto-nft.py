@@ -83,9 +83,9 @@ def init():
 
   curses.wrapper(gui)
 
-if __name__ == '__main__':
-  init()  
-
 # if __name__ == '__main__':
-#   resourceInfo, vsLen = main()
-#   print resourceInfo, ", ", vsLen
+#   init()
+
+if __name__ == '__main__':
+  resourceInfo, vsLen = main()
+  print resourceInfo, ", ", vsLen

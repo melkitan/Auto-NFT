@@ -5,6 +5,11 @@
     "params" : []
   },
   {
+    "type" : "next_stage",
+    "value" : "p4.Switch%s.table_set_next_stage%d.add_with_set_next_stage(%d, %d)",
+    "params" : []
+  },
+  {
     "type" : "header_match",
     "value" : "p4.Switch{pipe}.table_header_match_stage{virtualStageNum}.add_with_set_action_id{virtualStageNum}",
     "params" : {"inst_id" : "%d", "eth" : "0x%012X%012X%04X", "ipv4" : "0x000000000000000000000%02X%04X%06X%06X",
@@ -25,22 +30,22 @@
   },
   {
     "type" : "do_forward",
-    "value" : "p4.Switch{pipe}.table_action_forward_stage{virtualStageNum}.add_with_action_forward",
-    "params" : [["inst_id", ["%d"]], ["hash_output", ["0x%08X", "0x%08X"]], ["action_param", ["%d"]]]
+    "value" : "p4.Switch%s.table_action_forward_stage%d.add_with_action_forward",
+    "params" : [["inst_id", ["%d"]], ["hash_output", ["0x%04X", "0x%04X"]], ["action_param", ["%d"]]]
   },
   {
     "type" : "drop",
-    "value" : "p4.Switch{pipe}.table_action_drop_stage{virtualStageNum}.add_with_action_drop",
+    "value" : "p4.Switch%s.table_action_drop_stage%d.add_with_action_drop",
     "params" : [["inst_id", ["%d"]]]
   },
   {
     "type" : "mod_112_dstaddr",
-    "value" : "p4.Switch%s.table_action_mod_112_dstAddr_stage%d.add_with_action_mod_112_dstAddr(%d, 0x00000000000000000000000000000000%04X)",
-    "params" : [["%d"], ["0x%08X", "0x%08X"], ["%d"]]
+    "value" : "p4.Switch%s.table_action_mod_112_dstAddr_stage%d.add_with_action_mod_112_dstAddr",
+    "params" : [["inst_id", ["%d"]], ["action_param", ["0x%08X"]]]
   },
   {
     "type" : "mod_112_srcaddr",
-    "value" : "p4.Switch%s.table_action_mod_112_srcAddr_stage%d.add_with_action_mod_112_srcAddr(%d, 0x0000000000000000000000000000%04X0000)",
-    "params" : [["%d"], ["0x%08X", "0x%08X"], ["%d"]]
+    "value" : "p4.Switch%s.table_action_mod_112_srcAddr_stage%d.add_with_action_mod_112_srcAddr",
+    "params" : [["inst_id", ["%d"]], ["action_param", ["0x%08X"]]],
   }
 ]
