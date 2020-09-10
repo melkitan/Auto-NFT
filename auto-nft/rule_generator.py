@@ -9,6 +9,7 @@ def getRuleTemplate(target):
       rules[obj['type']] = [obj['value'], obj['params']]
   return rules
 
+actionMask = {'do_forward' : 0, 'drop' : 31, 'hash' : 15, 'mod_112_src' : 2, 'mod_112_dst' : 1}
 def generateMatchRule(ruleTemplate, keys, matchFields, actionName):
   # mapping input and match fields of table
   kdic = {}
@@ -35,7 +36,10 @@ def generateMatchRule(ruleTemplate, keys, matchFields, actionName):
   tcpMatchMask = ruleTemplate[1]['tcp'] % (tcp_srcPort_mask, tcp_dstPort_mask)
 
   # set action bitmap
-  actionBitmap = "0x%08X" % 0
+  if actionName != None:
+    actionBitmap = "0x%08X" % (1 << actionMask[actionName])
+  else:
+    actionBitmap = "0x00000000"
   return etherMatch + ", " + etherMatchMask + ", " + ipv4Match + ", " + ipv4MatchMask + ", " + tcpMatch + ", " + tcpMatchMask + ", " + actionBitmap
 
 def generateActionRule():
@@ -52,36 +56,47 @@ def translateRules(inst_id, rules, sortedCFG, tdic, rdic):
   header_chain_bitmap = 1
   translateRules = ruleTemplate % (pipe, inst_id, inst_id, stage_id, match_chain_bitmap, header_chain_bitmap)
   rlist.append(translateRules)
-  
+
+  last_vs_num = -1
   for node in sortedCFG: # sortedCFG: [table_info, num_of_rules, virtual_stage_number]
     pipe = node[2] < 3 and 'Ingress' or 'Egress'
-    virtualStageNum = node[2] + 1
+    virtual_stage_num = node[2] + 1
+
+    # next stage rule (table_set_next_stage)
+    if last_vs_num != -1:
+      next_stage = rules['next_stage'][0] % (pipe, last_vs_num, inst_id, virtual_stage_num)
+      rlist.append(next_stage)
+
     if node[0][0] == 'apply': # apply table, match and action
       actions = tdic[node[0][1]]['action']
       if node[0][1] not in rdic: continue
       for table_rule in rdic[node[0][1]]: # table_rule: [op, action name, match field, action param]
         # match
         headerMatchParam = generateMatchRule(rules['header_match'], tdic[node[0][1]]['key'], table_rule[2], table_rule[1])
-        translatedRule = rules['header_match'][0].format(pipe = pipe, virtualStageNum = virtualStageNum)
+        translatedRule = rules['header_match'][0].format(pipe = pipe, virtualStageNum = virtual_stage_num)
         rlist.append(translatedRule + "(" + str(inst_id) + ", " + headerMatchParam + ")")
 
         # action
-        if table_rule[1] in actions: # if action name of rule is valid
-          ruleTemplate = rules[table_rule[1]][0]
-          translatedRule = ruleTemplate.format(pipe = pipe, virtualStageNum = virtualStageNum)
-          params = ''
-          for param in rules[table_rule[1]][1]: # param: [param_name, parameter format]
-            if param[0] == 'inst_id':
-              params += (param[1][0] % inst_id)
-            elif param[0] == 'action_param':
-              for action_param_idx in range(len(table_rule[3])): # need to check hex type parameter
-                params += ', ' + (param[1][action_param_idx] % int(table_rule[3][action_param_idx]))
-            else: # exception
-              for i in range(len(param[1])):
-                params += ', ' + (param[1][i] % 0)
-          translatedRule = translatedRule + '(' + params + ')'
-          if translatedRule not in rlist:
-            rlist.append(translatedRule)
+        # if table_rule[1] in actions: # if action name of rule is valid
+        ruleTemplate = rules[table_rule[1]][0]
+        translatedRule = ruleTemplate % (pipe, virtual_stage_num)
+        params = ''
+        for param in rules[table_rule[1]][1]: # param: [param_name, parameter format]
+          if param[0] == 'inst_id':
+            params += (param[1][0] % inst_id)
+          elif param[0] == 'hash_output':
+            params += ", " + (param[1][0] % 0) + ", " + (param[1][1] % 0)
+          else:
+            for i in range(len(param[1])):
+              params += ', ' + (param[1][i] % 0)
+
+        translatedRule = translatedRule + '(' + params + ')'
+        if translatedRule not in rlist:
+          rlist.append(translatedRule)
+    else: # if/else statements
+      pass
+    last_vs_num = virtual_stage_num
+
   return rlist
 
 def makeFiles(rlist, target):
