@@ -17,7 +17,7 @@
   },
   {
     "type" : "next_stage",
-    "value" : "p4.Switch{pipe}.table_set_next_stage{virtualStageNum}.add_with_set_next_stage(%d, %d)",
+    "value" : "p4.Switch%s.table_set_next_stage%s.add_with_set_next_stage(%d, %d)",
     "params" : []
   },
   {
@@ -46,6 +46,6 @@
   {
     "type" : "mod_112_srcaddr",
     "value" : "p4.Switch%s.table_action_mod_112_srcAddr_stage%d.add_with_action_mod_112_srcAddr",
-    "params" : [["inst_id", ["%d"]], ["action_param", ["0x%08X"]]],
+    "params" : [["inst_id", ["%d"]], ["action_param", ["0x%08X"]]]
   }
 ]

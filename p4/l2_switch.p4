@@ -1,9 +1,10 @@
 table dmac {
-    reads {
-        ethernet.dstAddr : exact;
+    key = {
+        hdr.eth.dstAddr : exact;
     }
-    actions {forward;}
-    size : 512;
+    actions = {
+        do_forward;
+    }
 }
 
 control ingress{
