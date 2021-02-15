@@ -22,10 +22,12 @@
   },
   {
     "type" : "hash",
-    "value" : [
-      "p4.Switch%s.table_action_hash_stage%d.add_with_action_hash(%d)",
-      "p4.Switch%s.table_action_extract_meta_%d_stage%d.add_with_action_extract_meta_%d(%d, 0x%s)"
-    ],
+    "value" : "p4.Switch%s.table_action_hash_stage%d.add_with_action_hash",
+    "params" : [["inst_id", ["%d"]]]
+  },
+  {
+    "type" : "extract_meta",
+    "value" : "p4.Switch%s.table_action_extract_meta_stage%d.add_with_action_extract_meta_160(%d,0x000000000000000000000000FFFFFFFFFFFFFFFF)",
     "params" : []
   },
   {

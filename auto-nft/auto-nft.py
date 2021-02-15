@@ -12,20 +12,24 @@ NUM_OF_VS = 6
 BAR_SIZE = 50
 
 def main():
-  clist = []; tdic = {}; rdic = {}; sortedCFG = []
-  
-  ra.parseP4Code('firewall.p4', tdic, clist)
-  ra.parseP4Rules('firewall_rules', rdic)
+  nflist = ['firewall', 'lb', 'l3_forward', 'l2_switch']
+  inst_id = 1
+  for nf in nflist:
+    clist = []; tdic = {}; rdic = {}; sortedCFG = []
+    ra.parseP4Code(nf + '.p4', tdic, clist)
+    ra.parseP4Rules(nf + '_rules', rdic)
 
-  rm.sortControlFlowGraph(clist[0][2], sortedCFG)
-  rm.calculateNumOfEntries(sortedCFG, rdic)
-  rm.mapControlflowToStage(sortedCFG)
-  resourceInfo, vsLen = rm.resourcePerStage(sortedCFG)
+    rm.sortControlFlowGraph(clist[0][2], sortedCFG)
+    rm.calculateNumOfEntries(sortedCFG, rdic)
+    rm.mapControlflowToStage(sortedCFG)
+    resourceInfo, vsLen = rm.resourcePerStage(sortedCFG)
 
-  rules = rg.getRuleTemplate('tofino')
-  rlist = rg.translateRules(0, rules, sortedCFG, tdic, rdic)
-  rg.makeFiles(rlist, 'tofino')
-  # rg.populateRules('tofino')
+    rules = rg.getRuleTemplate('tofino')
+    rlist = rg.translateRules(inst_id, rules, sortedCFG, tdic, rdic)
+    rg.makeFiles(rlist, 'tofino')
+    # if you need to populate rules to switch, remove the comment.
+    # rg.populateRules('tofino')
+    inst_id += 1
 
   return resourceInfo, vsLen
 

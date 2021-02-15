@@ -1,0 +1,4 @@
+dmac add do_forward 256 => 2
+dmac add do_forward 258 => 4
+route add mod_112_srcaddr 168427521 => 256
+route add mod_112_srcaddr 168427522 => 258

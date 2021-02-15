@@ -9,7 +9,7 @@ def getRuleTemplate(target):
       rules[obj['type']] = [obj['value'], obj['params']]
   return rules
 
-actionMask = {'do_forward' : 0, 'drop' : 31, 'hash' : 15, 'mod_112_src' : 2, 'mod_112_dst' : 1}
+actionMask = {'do_forward' : 0, 'drop' : 31, 'hash' : 15, 'mod_112_srcaddr' : 2, 'mod_112_dstaddr' : 1}
 def generateMatchRule(ruleTemplate, keys, matchFields, actionName):
   # mapping input and match fields of table
   kdic = {}
@@ -26,7 +26,7 @@ def generateMatchRule(ruleTemplate, keys, matchFields, actionName):
   ipv4_protocol, ipv4_protocol_mask = 'hdr.ipv4.protocol' in kdic and (int(kdic['hdr.ipv4.protocol']), 2 ** 8 - 1) or (0, 0)
   ipv4_hdrChecksum, ipv4_hdrChecksum_mask = 'hdr.ipv4.hdrChecksum' in kdic and (int(kdic['hdr.ipv4.hdrChecksum']), 2 ** 16 - 1) or (0, 0)
   ipv4_srcAddr, ipv4_srcAddr_mask = 'hdr.ipv4.srcAddr' in kdic and (int(kdic['hdr.ipv4.srcAddr']), 2 ** 24 - 1) or (0, 0)
-  ipv4_dstAddr, ipv4_dstAddr_mask =  'hdr.ipv4.dstAddr' in kdic and (int(kdic['hdr.ipv4.dstAddr']), 2 ** 24 - 1) or (0, 0)
+  ipv4_dstAddr, ipv4_dstAddr_mask = 'hdr.ipv4.dstAddr' in kdic and (int(kdic['hdr.ipv4.dstAddr']), 2 ** 24 - 1) or (0, 0)
   ipv4Match= ruleTemplate[1]['ipv4'] % (ipv4_protocol, ipv4_hdrChecksum, ipv4_srcAddr, ipv4_dstAddr)
   ipv4MatchMask= ruleTemplate[1]['ipv4'] % (ipv4_protocol_mask, ipv4_hdrChecksum_mask, ipv4_srcAddr_mask, ipv4_dstAddr_mask)
   # tcp
@@ -93,6 +93,13 @@ def translateRules(inst_id, rules, sortedCFG, tdic, rdic):
         translatedRule = translatedRule + '(' + params + ')'
         if translatedRule not in rlist:
           rlist.append(translatedRule)
+
+        if table_rule[1] == 'hash':
+          ruleTemplate = rules['extract_meta'][0]
+          translatedRule = ruleTemplate % (pipe, virtual_stage_num, inst_id)
+          if translatedRule not in rlist:
+            rlist.append(translatedRule)
+
     else: # if/else statements
       pass
     last_vs_num = virtual_stage_num
